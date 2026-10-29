@@ -163,7 +163,7 @@ const cv=document.getElementById('ckc');if(cv){cv.width=st.ckCv.width;cv.height=
 if(c.pt){x.lineWidth=3;x.strokeStyle='#fff';x.beginPath();x.arc(c.pt[0],c.pt[1],9,0,7);x.stroke();x.lineWidth=1.5;x.strokeStyle='#000';x.beginPath();x.arc(c.pt[0],c.pt[1],11,0,7);x.stroke()}
 cv.onclick=e=>{const b=cv.getBoundingClientRect(),px=Math.round((e.clientX-b.left)*cv.width/b.width),py=Math.round((e.clientY-b.top)*cv.height/b.height);c.pt=[px,py];setCk(pickAt(st.ckCv,px,py),'누른 곳의 색');vShop()}}
 document.getElementById('ckgo').onclick=()=>{c.txt=document.getElementById('ckt').value.trim();if(!c.txt){c.msg='색 이름을 먼저 넣어 주세요';c.key=null;vShop();return}
-const k=colorFromText(c.txt);c.rgb=null;c.far=false;if(k){c.key=fitCat(k,c.cat);c.how=`'${c.txt}'에서 찾음`;c.msg=''}else{c.key=null;c.msg=`'${c.txt}'은 모르는 색 이름이에요. 아래에서 비슷한 색을 골라 주세요`}vShop()};
+const k=colorFromText(c.txt);c.rgb=null;c.far=false;if(k){c.key=fitCat(k,c.cat);c.how=`'${c.txt}'에서 찾음`;c.msg=''}else{c.key=null;c.msg=`모르는 색 이름이에요 (${esc(c.txt)}). 아래에서 비슷한 색을 골라 주세요`}vShop()};
 document.querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{c.key=b.dataset.ck;c.rgb=null;c.far=false;c.msg='';c.how='직접 고름';vShop()});
 const add=document.getElementById('ckadd');if(add)add.onclick=()=>{st.newCat=c.cat;st.newColor=c.key;document.querySelector('.tabs button[data-t="closet"]').click()}}
 function vShop(){const own=s=>W.some(x=>x.cat===s[1]&&x.color===s[0]&&x.kind===s[2]),L=SHOP.filter(s=>!own(s));
