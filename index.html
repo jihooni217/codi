@@ -67,7 +67,8 @@ const tier=t=>t>=23?0:t>=17?1:t>=11?2:t>=5?3:4;
 const TL=['더움','선선','쌀쌀','추움','한파'],TT=[25,19,13,7,0];
 const TOPK=[['tee','shirt'],['tee','shirt','knit','sweat','hood'],['shirt','knit','sweat','hood'],['knit','sweat','hood','cardi'],['knit','sweat','hood','cardi']];
 const WARM=['brown','khaki','green','mustard'],WARMB=['brown','khaki'];
-function effTemp(){if(st.manual!=null)return st.manual;const w=st.wx;if(!w)return 15;if(st.day==='tomorrow')return Math.round((w.tm.mn+w.tm.mx)/2);return Math.round(Math.min(w.a,(w.mn+w.mx)/2))}
+function effTemp(){if(st.manual!=null)return st.manual;const w=st.wx;if(!w)return 15;if(st.day==='tomorrow')return Math.round((w.tm.mn+w.tm.mx)/2);return Math.round((w.mn+w.mx)/2)}
+function dayRange(){const w=st.wx;if(st.manual!=null||!w)return 0;const d=st.day==='tomorrow'?w.tm:w;return Math.round(d.mx-d.mn)}
 function rain(){const w=st.wx;if(st.manual!=null||!w)return false;return st.day==='tomorrow'?w.tm.code>=51||w.tm.pp>=50:w.code>=51||w.pp>=50}
 const shoePr=c=>c==='black'?['silver','black','white','ivory']:['beige','brown','khaki','mocha'].includes(c)?['beige','ivory','silver','black']:['charcoal','melange','lightgray'].includes(c)?['silver','black','white','ivory']:['silver','ivory','white','black','beige'];
 function shoeFor(b,k){const sh=W.filter(x=>x.cat==='shoes'&&!(rain()&&x.kind==='canvas'));if(!sh.length)return null;
@@ -97,13 +98,13 @@ const nt=r=>!out.some(x=>x.t.id===r.t.id);
 pick(nt,3);pick(r=>nt(r)&&tone(r.t.color)!=='g');pick(nt);pick(()=>true);return out}
 const row=(l,x)=>x?`<div class="i">${dot(x.color)}<span class="l">${l}</span><span>${esc(x.name)}</span></div>`:'';
 function vToday(){const t=effTemp(),tr=tier(t),w=st.wx;
-let wx=st.manual!=null?'직접 고름':w&&st.day==='tomorrow'?`최저 ${Math.round(w.tm.mn)}° · 최고 ${Math.round(w.tm.mx)}°${rain()?' · 비 소식':''}`:w?`지금 ${Math.round(w.t)}° · 체감 ${Math.round(w.a)}° · 최저 ${Math.round(w.mn)}° · 최고 ${Math.round(w.mx)}°${rain()?' · 비 소식':''}`:st.wxMsg;
+let wx=st.manual!=null?'직접 고름':w&&st.day==='tomorrow'?`최저 ${Math.round(w.tm.mn)}° · 최고 ${Math.round(w.tm.mx)}°${rain()?' · 비 소식':''}`:w?`지금 ${Math.round(w.t)}° · 최저 ${Math.round(w.mn)}° · 최고 ${Math.round(w.mx)}°${rain()?' · 비 소식':''}`:st.wxMsg;
 const bots=W.filter(x=>x.cat==='bottom'),os=outfits();
 const now=new Date(),dd=st.day==='tomorrow'?new Date(now.getTime()+864e5):now;
 document.getElementById('v-today').innerHTML=`<div class="mast"><span>오늘 코디</span><span>${dd.getMonth()+1}.${String(dd.getDate()).padStart(2,'0')} ${'일월화수목금토'[dd.getDay()]}</span></div>
 <div class="seg">${[['today','오늘'],['tomorrow','내일']].map(([k,v])=>`<button data-d="${k}" class="${st.day===k?'on':''}">${v}</button>`).join('')}</div>
 <div class="temp"><b>${w||st.manual!=null?t+'°':'—'}</b><span>${TL[tr]}</span></div>
-<div class="s">${wx}</div><div class="s">${st.manual!=null?'직접 고른 온도로 추천해요':(st.loc?st.loc+' · ':'')+'이 온도 기준으로 추천해요'}</div>
+<div class="s">${wx}</div>${dayRange()>=10?`<div style="font-size:13px;font-weight:600;margin-top:2px">일교차 ${dayRange()}° · 아침저녁엔 걸칠 것 챙기기</div>`:''}<div class="s">${st.manual!=null?'직접 고른 온도로 추천해요':(st.loc?st.loc+' · ':'')+'최저·최고의 중간 온도로 추천해요'}</div>
 <div class="mini">${TL.map((x,i)=>`<button data-m="${i}" class="${st.manual!=null&&tier(st.manual)===i?'on':''}">${x}</button>`).join('')}</div>
 ${st.manual!=null?'<button data-m="live" style="width:100%;justify-content:center;margin-top:6px;font-size:14px">실시간 날씨로 돌아가기</button>':''}
 <h2>하의</h2><div class="hs"><button data-b="auto" class="${st.bottom==='auto'?'on':''}">알아서</button>${bots.map(b=>`<button data-b="${b.id}" class="${st.bottom===b.id?'on':''}">${dot(b.color)}${esc(b.name)}</button>`).join('')}</div>
