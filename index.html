@@ -76,7 +76,7 @@ function rain(){const w=st.wx;if(st.manual!=null||!w)return false;return st.day=
 const shoePr=c=>c==='black'?['silver','black','white','ivory']:['beige','brown','khaki','mocha'].includes(c)?['beige','ivory','silver','black']:['charcoal','melange','lightgray'].includes(c)?['silver','black','white','ivory']:['silver','ivory','white','black','beige'];
 // 신어 보니 밑단이 신발 혀에 걸려 애매했던 조합
 const NOPAIR=[['옐로우 더스트 인디고 데님','NB 480 베이지']];
-function shoeFor(b,k){const sh=W.filter(x=>x.cat==='shoes'&&!(rain()&&x.kind==='canvas')&&!NOPAIR.some(([p,q])=>p===b.name&&q===x.name));if(!sh.length)return null;
+function shoeFor(b,k){const sh=W.filter(x=>x.cat==='shoes'&&!((rain()||tier(effTemp())===4)&&x.kind==='canvas')&&!NOPAIR.some(([p,q])=>p===b.name&&q===x.name));if(!sh.length)return null;
 const pr=shoePr(b.color);
 const ok=[];for(const c of pr){const f=sh.find(x=>x.color===c);if(f)ok.push(f)}
 return ok.length?ok[Math.floor(rnd(k+'s')*ok.length)]:sh[0]}
