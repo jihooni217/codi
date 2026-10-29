@@ -24,7 +24,7 @@ button{display:flex;align-items:center;gap:7px;text-align:left}button.on{border:
 .tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--bd);padding:6px 8px calc(env(safe-area-inset-bottom) + 6px)}
 .tabs button{flex:1;justify-content:center;border:none;background:none;color:var(--sub)}.tabs button.on{color:var(--ac);font-weight:600}
 .sw{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.sw button{flex-direction:column;font-size:11px;padding:8px 2px;justify-content:center;text-align:center}
-.err{color:var(--dg);font-size:13px;min-height:18px}input,select{width:100%;margin-bottom:8px}
+.err{color:var(--dg);font-size:13px;min-height:18px}.ckup{display:flex;justify-content:center;border:1px solid var(--bd);border-radius:10px;padding:10px;background:var(--card);margin-bottom:8px;font-size:14px}input,select{width:100%;margin-bottom:8px}
 </style>
 </head>
 <body>
@@ -145,8 +145,8 @@ return{v,L}}
 function ckHTML(){const c=st.ck,r=c.key?judge(c.key,c.cat):null;
 return`<div class="c"><div class="n">무신사 상품 캡처를 올리거나, 상세페이지에 적힌 색 이름을 넣어 보세요</div>
 <select id="ckcat">${Object.entries(CAT).map(([k,v])=>`<option value="${k}" ${k===c.cat?'selected':''}>${v}</option>`).join('')}</select>
-<input type="file" accept="image/*" id="ckf">
-${st.ckCv?`<canvas id="ckc" style="display:block;max-width:100%;max-height:50vh;margin:0 auto 6px;border-radius:10px"></canvas><div class="s" style="text-align:center;margin-bottom:8px">색이 다르게 나오면 사진에서 옷 부분을 눌러 주세요</div>`:''}
+<label class="ckup"><input type="file" accept="image/*" id="ckf" hidden>${st.ckCv?'다른 캡처 올리기':'무신사 캡처 올리기'}</label>
+${st.ckCv?`<canvas id="ckc" style="display:block;max-width:100%;max-height:35vh;margin:0 auto 6px;border-radius:10px"></canvas><div class="s" style="text-align:center;margin-bottom:8px">색이 다르게 나오면 사진에서 옷 부분을 눌러 주세요</div>`:''}
 <input id="ckt" placeholder="상세페이지 색 이름 (예: 멜란지 그레이)" value="${esc(c.txt)}"><button id="ckgo" style="width:100%;justify-content:center">색 이름으로 확인</button>
 ${c.msg?`<div class="err" style="margin-top:8px">${c.msg}</div>`:''}
 ${r?`<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--bd)"><div class="i">${dot(c.key)}<span style="flex:1"><b>${P[c.key][0]}</b> <span class="s">· ${c.how}</span></span><b style="color:${r.v[1]}">${r.v[0]}</b></div>
