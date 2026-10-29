@@ -113,9 +113,10 @@ ${L.length?L.map((s,i)=>`<div class="c"><div class="i">${dot(s[0])}<span style="
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));
 ['today','closet','shop'].forEach(t=>document.getElementById('v-'+t).hidden=t!==b.dataset.t);({today:vToday,closet:vCloset,shop:vShop})[b.dataset.t]()});
 async function loadWx(lat,lon,label){try{const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=1`);const j=await r.json();
-st.wx={t:j.current.temperature_2m,a:j.current.apparent_temperature,code:j.current.weather_code,mn:j.daily.temperature_2m_min[0],mx:j.daily.temperature_2m_max[0],pp:j.daily.precipitation_probability_max[0]||0};st.loc=label}catch(e){st.wxMsg='날씨를 못 불러왔어요. 위 버튼으로 골라 주세요'}vToday()}
-vToday();
-if(navigator.geolocation)navigator.geolocation.getCurrentPosition(p=>loadWx(p.coords.latitude,p.coords.longitude,'현재 위치 날씨'),()=>loadWx(37.5665,126.978,'서울 기준 날씨 (위치 권한 없음)'),{timeout:8000});else loadWx(37.5665,126.978,'서울 기준 날씨');
+st.wx={t:j.current.temperature_2m,a:j.current.apparent_temperature,code:j.current.weather_code,mn:j.daily.temperature_2m_min[0],mx:j.daily.temperature_2m_max[0],pp:j.daily.precipitation_probability_max[0]||0};st.loc=label;st.wxAt=Date.now()}catch(e){st.wxMsg='날씨를 못 불러왔어요. 위 버튼으로 골라 주세요'}vToday()}
+function getWx(){if(navigator.geolocation)navigator.geolocation.getCurrentPosition(p=>loadWx(p.coords.latitude,p.coords.longitude,'현재 위치 날씨'),()=>loadWx(37.5665,126.978,'서울 기준 날씨 (위치 권한 없음)'),{timeout:8000});else loadWx(37.5665,126.978,'서울 기준 날씨')}
+vToday();getWx();
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&Date.now()-(st.wxAt||0)>10*60*1000)getWx()});
 </script>
 </body>
 </html>
