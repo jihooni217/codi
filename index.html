@@ -51,8 +51,9 @@ const TOPK=[['tee','shirt'],['tee','shirt','knit','sweat','hood'],['shirt','knit
 const WARM=['brown','khaki','green','mustard'],WARMB=['brown','khaki'];
 function effTemp(){if(st.manual!=null)return st.manual;const w=st.wx;if(!w)return 15;if(st.day==='tomorrow')return Math.round((w.tm.mn+w.tm.mx)/2);return Math.round(Math.min(w.a,(w.mn+w.mx)/2))}
 function rain(){const w=st.wx;if(st.manual!=null||!w)return false;return st.day==='tomorrow'?w.tm.code>=51||w.tm.pp>=50:w.code>=51||w.pp>=50}
+const shoePr=c=>c==='black'?['silver','black','white','ivory']:['beige','brown','khaki','mocha'].includes(c)?['beige','ivory','silver','black']:['charcoal','melange','lightgray'].includes(c)?['silver','black','white','ivory']:['silver','ivory','white','black','beige'];
 function shoeFor(b,k){const sh=W.filter(x=>x.cat==='shoes'&&!(rain()&&x.kind==='canvas'));if(!sh.length)return null;
-const pr=b.color==='black'?['silver','black','white','ivory']:['beige','brown','khaki','mocha'].includes(b.color)?['beige','ivory','silver','black']:['charcoal','melange','lightgray'].includes(b.color)?['silver','black','white','ivory']:['silver','ivory','white','black','beige'];
+const pr=shoePr(b.color);
 const ok=[];for(const c of pr){const f=sh.find(x=>x.color===c);if(f)ok.push(f)}
 return ok.length?ok[Math.floor(rnd(k+'s')*ok.length)]:sh[0]}
 function outfits(){const tr=tier(effTemp()),tops=W.filter(x=>x.cat==='top'),outs=W.filter(x=>x.cat==='outer'),cardis=tops.filter(x=>x.kind==='cardi');
@@ -108,10 +109,67 @@ W.push({id:'u'+Date.now(),name:n,cat:st.newCat,kind:document.getElementById('kd'
 document.querySelectorAll('[data-del]').forEach(x=>x.onclick=()=>{if(confirm('이 옷을 삭제할까요?')){W=W.filter(y=>y.id!==x.dataset.del);save();vCloset()}});
 document.getElementById('rs').onclick=()=>{if(confirm('추가·삭제한 내용이 모두 사라져요. 되돌릴까요?')){W=DEF.map((d,i)=>({id:'d'+i,name:d[0],cat:d[1],kind:d[2],color:d[3]}));save();vCloset()}}}
 const SHOP=[['offwhite','top','knit','오프화이트 니트','새하얀 흰색보다 부드럽게 얼굴을 밝혀줘요'],['skyblue','top','shirt','스카이 블루 옥스포드 셔츠','니트 안에 받쳐 입으면 칼라가 얼굴을 환하게 해줘요'],['dustyblue','top','knit','더스티 블루 니트','쿨 뮤트에 가장 잘 맞는 블루예요'],['navy','top','knit','네이비 니트·가디건','후디보다 단정한 네이비 기본템'],['lightgray','top','sweat','라이트 그레이 맨투맨','그레이 톤온톤 기본템'],['white','top','shirt','화이트 셔츠','코트·니트 레이어드용'],['dustypink','top','knit','더스티 핑크 니트','과하지 않은 포인트 컬러'],['lavender','top','sweat','라벤더 맨투맨','봄·가을 포인트 컬러'],['charcoal','bottom','pants','차콜 슬랙스','니트·코트와 단정하게 입기 좋아요'],['lightwash','bottom','pants','연청 데님','쿨톤 워싱이라 상의 색을 다 받아줘요'],['black','shoes','leather','블랙 더비·로퍼','코트·슬랙스 단정룩용']];
+const CN=[['offwhite',['오프화이트','offwhite','크림','cream','에크루','ecru','바닐라','vanilla']],['ivory',['아이보리','ivory']],['white',['화이트','white','흰색','흰']],['lightgray',['라이트그레이','lightgray','lightgrey','연그레이','연회색','애쉬','ash']],['melange',['멜란지','melange','그레이','gray','grey','회색','헤더','heather']],['charcoal',['차콜','charcoal','다크그레이','darkgray','darkgrey','진회색']],['black',['블랙','black','검정','검은','먹색']],['navy',['네이비','navy','곤색','다크블루','darkblue','미드나잇','midnight']],['dustyblue',['더스티블루','dustyblue','스모크블루','그레이블루','grayblue','greyblue','스틸블루','블루','blue']],['skyblue',['스카이','sky','하늘','라이트블루','lightblue','페일블루','소라']],['lavender',['라벤더','lavender','라일락','lilac','퍼플','purple','보라','바이올렛','violet']],['dustypink',['핑크','pink','로즈','rose','코랄','coral','피치','peach']],['burgundy',['버건디','burgundy','와인','wine','보르도','bordeaux','레드','red','빨강','마룬','maroon']],['brown',['브라운','brown','갈색','초코','choco','코코아','cocoa']],['mocha',['모카','mocha','토프','taupe','카키모카','그레이지','greige']],['beige',['베이지','beige','샌드','sand','오트밀','oatmeal','카멜','camel','탄','tan','스톤','stone','라떼','latte']],['khaki',['카키','khaki','올리브','olive']],['green',['그린','green','초록','포레스트','forest','민트','mint','세이지','sage']],['mustard',['머스타드','mustard','옐로우','yellow','노랑','레몬','lemon','오렌지','orange']],['rawdenim',['생지','로우데님','rawdenim','진청','인디고','indigo','다크데님']],['midwash',['중청','미드워싱','midwash','미디엄블루','데님','denim']],['lightwash',['연청','라이트워싱','lightwash','라이트데님']],['silver',['실버','silver','메탈']]];
+const DENIM={rawdenim:'navy',midwash:'dustyblue',lightwash:'skyblue'};
+const fitCat=(k,cat)=>cat!=='bottom'&&cat!=='outer'&&DENIM[k]?DENIM[k]:cat!=='shoes'&&k==='silver'?'lightgray':k;
+function colorFromText(s){const t=s.toLowerCase().replace(/[\s\-_/·().,]/g,'');let best=null,bl=0;
+for(const [k,ws] of CN)for(const w of ws)if(w.length>bl&&t.includes(w)){best=k;bl=w.length}return best}
+function lab([r,g,b]){[r,g,b]=[r,g,b].map(v=>{v/=255;return v>0.04045?((v+0.055)/1.055)**2.4:v/12.92});
+const f=t=>t>0.008856?Math.cbrt(t):7.787*t+16/116,x=f((r*0.4124+g*0.3576+b*0.1805)/0.95047),y=f(r*0.2126+g*0.7152+b*0.0722),z=f((r*0.0193+g*0.1192+b*0.9505)/1.08883);
+return[116*y-16,500*(x-y),200*(y-z)]}
+function nearest(rgb,cat){const l=lab(rgb);let best,bd=1e9;for(const k in P){if(fitCat(k,cat)!==k)continue;
+const m=lab([1,3,5].map(i=>parseInt(P[k][1].slice(i,i+2),16))),d=Math.hypot(l[0]-m[0],l[1]-m[1],l[2]-m[2]);if(d<bd){bd=d;best=k}}return{k:best,d:bd}}
+function autoColor(cv){const w=cv.width,h=cv.height,d=cv.getContext('2d').getImageData(0,0,w,h).data,q=i=>(d[i]>>5)<<6|(d[i+1]>>5)<<3|(d[i+2]>>5),at=(x,y)=>(y*w+x)*4,bc={};
+for(let x=0;x<w;x+=2)for(const y of[0,1,h-2,h-1]){const k=q(at(x,y));bc[k]=(bc[k]||0)+1}
+for(let y=0;y<h;y+=2)for(const x of[0,1,w-2,w-1]){const k=q(at(x,y));bc[k]=(bc[k]||0)+1}
+const bg=+Object.entries(bc).sort((a,b)=>b[1]-a[1])[0][0],bgc=[(bg>>6)*32+16,((bg>>3)&7)*32+16,(bg&7)*32+16],B={};
+for(let y=Math.floor(h*.15);y<h*.85;y+=2)for(let x=Math.floor(w*.15);x<w*.85;x+=2){const i=at(x,y),r=d[i],g=d[i+1],b=d[i+2];
+if(Math.hypot(r-bgc[0],g-bgc[1],b-bgc[2])<48)continue;const e=B[q(i)]||(B[q(i)]={n:0,r:0,g:0,b:0});e.n++;e.r+=r;e.g+=g;e.b+=b}
+const t=Object.values(B).sort((a,b)=>b.n-a.n)[0];return t?[t.r/t.n,t.g/t.n,t.b/t.n]:null}
+function pickAt(cv,x,y){const c=cv.getContext('2d'),x0=Math.max(0,x-4),y0=Math.max(0,y-4),d=c.getImageData(x0,y0,Math.min(9,cv.width-x0),Math.min(9,cv.height-y0)).data,s=[0,0,0];
+for(let i=0;i<d.length;i+=4){s[0]+=d[i];s[1]+=d[i+1];s[2]+=d[i+2]}const n=d.length/4;return s.map(v=>v/n)}
+st.ck={cat:'top',key:null,rgb:null,how:'',txt:'',far:false,pt:null,msg:''};st.ckCv=null;
+function setCk(rgb,how){const c=st.ck;c.rgb=rgb;c.how=how;c.msg='';if(!rgb){c.key=null;c.msg='옷 색을 찾지 못했어요. 사진에서 옷 부분을 눌러 주세요';return}const n=nearest(rgb,c.cat);c.key=n.k;c.far=n.d>20}
+function judge(k,cat){const tn=P[k][2],face=cat==='top'||cat==='outer',same=W.filter(x=>x.cat===cat&&x.color===k),L=[];
+L.push(!face?(cat==='bottom'?'하의라서 얼굴 색과는 상관없어요':'신발이라 얼굴 색과는 상관없어요'):tn==='g'?'얼굴 근처에 잘 맞는 색이에요 (여름 쿨 뮤트)':tn==='o'?'무난한 색이에요. 얼굴 가까이 입어도 크게 튀지 않아요':cat==='top'?'얼굴 근처에선 피할 색이에요. 흰색·회색 티를 안에 받쳐 입어야 해요':'얼굴 근처에선 피할 색이에요. 안에 밝은 무채색 상의를 입으면 괜찮아요');
+const ng=(t,b)=>t==='black'&&b==='black'||WARM.includes(t)&&WARMB.includes(b);
+const pair=(list,bad,what,verb)=>{const no=list.filter(bad);L.push(`옷장 ${what} ${list.length}벌 중 ${list.length-no.length}벌${verb}`+(no.length?` (안 맞는 것: ${no.map(x=>x.name).join(', ')})`:''))};
+if(cat==='top')pair(W.filter(x=>x.cat==='bottom'),b=>ng(k,b.color),'하의','과 어울려요');
+if(cat==='bottom')pair(W.filter(x=>x.cat==='top'),t=>ng(t.color,k),'상의','과 어울려요');
+if(cat==='outer')pair(W.filter(x=>x.cat==='top'),t=>tn==='a'&&tone(t.color)==='a','상의',' 위에 걸칠 수 있어요');
+if(cat==='shoes')pair(W.filter(x=>x.cat==='bottom'),b=>!shoePr(b.color).includes(k),'하의','과 어울려요');
+if(same.length)L.push('이미 같은 색이 있어요: '+same.map(x=>x.name).join(', '));
+if(!same.length&&SHOP.some(s=>s[0]===k&&s[1]===cat))L.push('아래 \'사면 좋은 색\'에 있는 색이에요');
+const v=face&&tn==='a'?[cat==='top'?'이너가 필요해요':'안에 밝은 상의로','var(--dg)']:face&&tn==='g'?['잘 어울려요','var(--ac)']:['괜찮아요','var(--tx)'];if(same.length)v[0]+=' · 같은 색 있음';
+return{v,L}}
+function ckHTML(){const c=st.ck,r=c.key?judge(c.key,c.cat):null;
+return`<div class="c"><div class="n">무신사 상품 캡처를 올리거나, 상세페이지에 적힌 색 이름을 넣어 보세요</div>
+<select id="ckcat">${Object.entries(CAT).map(([k,v])=>`<option value="${k}" ${k===c.cat?'selected':''}>${v}</option>`).join('')}</select>
+<input type="file" accept="image/*" id="ckf">
+${st.ckCv?`<canvas id="ckc" style="display:block;max-width:100%;max-height:50vh;margin:0 auto 6px;border-radius:10px"></canvas><div class="s" style="text-align:center;margin-bottom:8px">색이 다르게 나오면 사진에서 옷 부분을 눌러 주세요</div>`:''}
+<input id="ckt" placeholder="상세페이지 색 이름 (예: 멜란지 그레이)" value="${esc(c.txt)}"><button id="ckgo" style="width:100%;justify-content:center">색 이름으로 확인</button>
+${c.msg?`<div class="err" style="margin-top:8px">${c.msg}</div>`:''}
+${r?`<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--bd)"><div class="i">${dot(c.key)}<span style="flex:1"><b>${P[c.key][0]}</b> <span class="s">· ${c.how}</span></span><b style="color:${r.v[1]}">${r.v[0]}</b></div>
+${c.far?'<div class="s">딱 맞는 색이 목록에 없어서 가장 가까운 색으로 봤어요</div>':''}
+${r.L.map(x=>`<div class="s" style="padding:3px 0">· ${x}</div>`).join('')}
+<button id="ckadd" style="width:100%;justify-content:center;margin-top:8px">이 색으로 옷장에 넣기</button></div>`:''}
+${c.key||c.msg?`<div class="n" style="margin-top:12px">다른 색이면 골라 주세요</div><div class="sw">${Object.entries(P).filter(([k])=>fitCat(k,c.cat)===k).map(([k,v])=>`<button data-ck="${k}" class="${k===c.key?'on':''}">${dot(k)}${v[0]}</button>`).join('')}</div>`:''}</div>`}
+function ckBind(){const c=st.ck;
+document.getElementById('ckcat').onchange=e=>{c.cat=e.target.value;if(c.rgb)setCk(c.rgb,c.how);else if(c.key)c.key=fitCat(c.key,c.cat);vShop()};
+document.getElementById('ckf').onchange=e=>{const f=e.target.files[0];if(!f)return;const img=new Image();img.onload=()=>{const s=Math.min(1,480/Math.max(img.width,img.height)),cv=document.createElement('canvas');
+cv.width=Math.round(img.width*s);cv.height=Math.round(img.height*s);cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);URL.revokeObjectURL(img.src);st.ckCv=cv;c.pt=null;setCk(autoColor(cv),'사진에서 자동으로 찾음');vShop()};
+img.onerror=()=>{c.msg='사진을 열지 못했어요';vShop()};img.src=URL.createObjectURL(f)};
+const cv=document.getElementById('ckc');if(cv){cv.width=st.ckCv.width;cv.height=st.ckCv.height;const x=cv.getContext('2d');x.drawImage(st.ckCv,0,0);
+if(c.pt){x.lineWidth=3;x.strokeStyle='#fff';x.beginPath();x.arc(c.pt[0],c.pt[1],9,0,7);x.stroke();x.lineWidth=1.5;x.strokeStyle='#000';x.beginPath();x.arc(c.pt[0],c.pt[1],11,0,7);x.stroke()}
+cv.onclick=e=>{const b=cv.getBoundingClientRect(),px=Math.round((e.clientX-b.left)*cv.width/b.width),py=Math.round((e.clientY-b.top)*cv.height/b.height);c.pt=[px,py];setCk(pickAt(st.ckCv,px,py),'누른 곳의 색');vShop()}}
+document.getElementById('ckgo').onclick=()=>{c.txt=document.getElementById('ckt').value.trim();if(!c.txt){c.msg='색 이름을 먼저 넣어 주세요';c.key=null;vShop();return}
+const k=colorFromText(c.txt);c.rgb=null;c.far=false;if(k){c.key=fitCat(k,c.cat);c.how=`'${c.txt}'에서 찾음`;c.msg=''}else{c.key=null;c.msg=`'${c.txt}'은 모르는 색 이름이에요. 아래에서 비슷한 색을 골라 주세요`}vShop()};
+document.querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{c.key=b.dataset.ck;c.rgb=null;c.far=false;c.msg='';c.how='직접 고름';vShop()});
+const add=document.getElementById('ckadd');if(add)add.onclick=()=>{st.newCat=c.cat;st.newColor=c.key;document.querySelector('.tabs button[data-t="closet"]').click()}}
 function vShop(){const own=s=>W.some(x=>x.cat===s[1]&&x.color===s[0]&&x.kind===s[2]),L=SHOP.filter(s=>!own(s));
-document.getElementById('v-shop').innerHTML=`<h1>사면 좋은 색</h1><div class="s">흔히 파는 색 중 여름 쿨 뮤트에 맞고 지금 옷장에 없는 것만, 우선순위 순서예요.</div>
+document.getElementById('v-shop').innerHTML=`<h1>쇼핑</h1><h2>살까 말까 색 확인</h2>${ckHTML()}<h2>사면 좋은 색</h2><div class="s">흔히 파는 색 중 여름 쿨 뮤트에 맞고 지금 옷장에 없는 것만, 우선순위 순서예요.</div>
 ${L.length?L.map((s,i)=>`<div class="c"><div class="i">${dot(s[0])}<span style="flex:1"><b>${i+1}. ${s[3]}</b><br><span class="s">${s[4]}</span></span></div></div>`).join(''):'<div class="c s">추천 색을 다 갖췄어요</div>'}
-<h2>얼굴 근처에선 피할 색</h2><div class="c s">블랙, 버건디, 브라운, 카키, 그린, 머스타드는 상의로 살 땐 이너 레이어드가 필요해요. 하의나 신발은 괜찮아요.</div>`}
+<h2>얼굴 근처에선 피할 색</h2><div class="c s">블랙, 버건디, 브라운, 카키, 그린, 머스타드는 상의로 살 땐 이너 레이어드가 필요해요. 하의나 신발은 괜찮아요.</div>`;ckBind()}
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));
 ['today','closet','shop'].forEach(t=>document.getElementById('v-'+t).hidden=t!==b.dataset.t);({today:vToday,closet:vCloset,shop:vShop})[b.dataset.t]()});
 async function loadWx(lat,lon,label){try{const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code&timezone=auto&forecast_days=2`);const j=await r.json();
