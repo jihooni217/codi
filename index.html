@@ -66,7 +66,7 @@ if(tr===3){const f=outs.filter(o=>o.kind>='2');oo=f.length?f:[null]}
 if(tr===4){let f=outs.filter(o=>o.kind==='3');if(!f.length)f=outs.filter(o=>o.kind>='2');oo=f.length?f:[null]}
 for(const o of oo){if(o&&o.id===t.id)continue;let sc={g:3,o:2.5,a:-1}[tone(t.color)],notes=[];
 if(o&&tone(o.color)==='a'){if(tone(t.color)==='a')continue;if(t.kind==='hood'){sc+=2;notes.push('후드는 아우터 밖으로')}}
-if(o&&tone(o.color)==='g')sc+=1;
+if(o&&tone(o.color)==='g'&&tr!==1)sc+=1;
 let inner=null;if(t.kind!=='tee'&&(tone(t.color)==='a'||t.kind==='cardi'&&!o)){inner=tees.find(x=>x.id!==t.id)||{name:'화이트·그레이 티 (추천)',color:'white'};notes.push('목에 이너가 살짝 보이게');if(tone(t.color)==='a')sc+=3.5}
 if(t.color===b.color&&!['melange','charcoal'].includes(t.color))sc-=1;
 if(b.kind==='shorts')sc+=1.5;
