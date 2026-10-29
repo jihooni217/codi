@@ -149,7 +149,7 @@ return`<div class="c"><div class="n">무신사 상품 캡처를 올리거나, �
 ${st.ckCv?`<canvas id="ckc" style="display:block;max-width:100%;max-height:35vh;margin:0 auto 6px;border-radius:10px"></canvas><div class="s" style="text-align:center;margin-bottom:8px">색이 다르게 나오면 사진에서 옷 부분을 눌러 주세요</div>`:''}
 <input id="ckt" placeholder="상세페이지 색 이름 (예: 멜란지 그레이)" value="${esc(c.txt)}"><button id="ckgo" style="width:100%;justify-content:center">색 이름으로 확인</button>
 ${c.msg?`<div class="err" style="margin-top:8px">${c.msg}</div>`:''}
-${r?`<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--bd)"><div class="i">${dot(c.key)}<span style="flex:1"><b>${P[c.key][0]}</b> <span class="s">· ${c.how}</span></span><b style="color:${r.v[1]}">${r.v[0]}</b></div>
+${r?`<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--bd)"><div style="font-size:17px;font-weight:600;color:${r.v[1]}">${r.v[0]}</div><div class="i">${dot(c.key)}<b>${P[c.key][0]}</b><span class="s">${c.how}</span></div>
 ${c.far?'<div class="s">딱 맞는 색이 목록에 없어서 가장 가까운 색으로 봤어요</div>':''}
 ${r.L.map(x=>`<div class="s" style="padding:3px 0">· ${x}</div>`).join('')}
 <button id="ckadd" style="width:100%;justify-content:center;margin-top:8px">이 색으로 옷장에 넣기</button></div>`:''}
