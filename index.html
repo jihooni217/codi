@@ -99,6 +99,8 @@ if(o&&tone(o.color)==='g')sc+=1;
 let inner=null;if(t.kind!=='tee'&&(tone(t.color)==='a'||t.kind==='cardi'&&!o)){inner=tees.find(x=>x.id!==t.id)||{name:'화이트·그레이 티 (추천)',color:'white'};notes.push('목에 이너가 살짝 보이게');if(tone(t.color)==='a')sc+=3.5}
 if(t.color===b.color&&!['melange','charcoal'].includes(t.color))sc-=1;
 if(b.kind==='shorts')sc+=1.5;
+// 옆 단추로 통을 바꾸는 바지: 큰 상의엔 모으고, 몸에 맞는 상의엔 펴기
+if(b.name==='그레이 스웨트 팬츠')notes.push(t.kind==='hood'||t.kind==='sweat'?'바지 밑단은 조거나 커브드로 모으기':'바지 밑단은 펴서 와이드로');
 const k=t.id+b.id+(o?o.id:'');sc+=rnd(k)*3;res.push({b,t,o,inner,sh:shoeFor(b,k),sc,notes})}}
 res.sort((a,b)=>b.sc-a.sc);const out=[],ub={},used=new Set(),cap=st.bottom==='auto'?2:4;
 const pick=(ok,n=4)=>{for(const r of res){if(out.length>=n)return;const p=r.t.id+r.b.id;if(used.has(p)||(ub[r.b.id]||0)>=cap||!ok(r))continue;used.add(p);ub[r.b.id]=(ub[r.b.id]||0)+1;out.push(r)}};
