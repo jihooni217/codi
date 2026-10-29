@@ -32,9 +32,9 @@ button{display:flex;align-items:center;gap:7px;text-align:left}button.on{border:
 <nav class="tabs"><button data-t="today" class="on">오늘</button><button data-t="closet">옷장</button><button data-t="shop">쇼핑</button></nav>
 <script>
 const P={white:['화이트','#F4F4F2','g'],offwhite:['오프화이트','#ECE8DF','g'],ivory:['아이보리','#EFE6D2','o'],lightgray:['라이트 그레이','#C9CACC','g'],melange:['그레이','#9C9DA0','g'],charcoal:['차콜','#4A4C50','g'],black:['블랙','#1F1F20','a'],navy:['네이비','#2E3A55','g'],dustyblue:['더스티 블루','#7F95AE','g'],skyblue:['스카이 블루','#A9C4E0','g'],lavender:['라벤더','#B4ABCB','g'],dustypink:['더스티 핑크','#C9A0A6','g'],burgundy:['버건디','#6E2A33','a'],brown:['브라운','#6B4A36','a'],mocha:['카키모카','#6E625C','o'],beige:['베이지','#CDB896','o'],khaki:['카키','#5E5E44','a'],green:['그린','#3F5A3E','a'],mustard:['머스타드','#C9A23A','a'],rawdenim:['생지 데님','#2B3448','g'],midwash:['중청 데님','#5F7287','g'],lightwash:['연청 데님','#9DB1C6','g'],silver:['실버','#B8BBC0','g']};
-const K={top:{tee:'티셔츠',shirt:'셔츠',knit:'니트',sweat:'맨투맨',hood:'후디',cardi:'가디건·집업'},outer:{'1':'가벼운 아우터','2':'중간 아우터','3':'두꺼운 아우터'},bottom:{pants:'바지'},shoes:{sneaker:'운동화',leather:'가죽화',canvas:'캔버스화'}};
+const K={top:{tee:'티셔츠',shirt:'셔츠',knit:'니트',sweat:'맨투맨',hood:'후디',cardi:'가디건·집업'},outer:{'1':'가벼운 아우터','2':'중간 아우터','3':'두꺼운 아우터'},bottom:{pants:'바지',thick:'두꺼운 바지 (코듀로이 등)'},shoes:{sneaker:'운동화',leather:'가죽화',canvas:'캔버스화'}};
 const CAT={top:'상의',outer:'아우터',bottom:'하의',shoes:'신발'};
-const DEF=[['화이트 티','top','tee','white'],['차콜 하프집업 니트','top','knit','charcoal'],['카키모카 니트','top','knit','mocha'],['그레이 가디건','top','cardi','melange'],['그레이 LMS 후디','top','hood','melange'],['네이비 LMS 후디','top','hood','navy'],['그레이 크롭 후드집업','top','cardi','lightgray'],['버건디 헨리넥','top','knit','burgundy'],['버건디 맨투맨','top','sweat','burgundy'],['브라운 헨리넥','top','knit','brown'],['블랙 CDM 니트','top','knit','black'],['그린 트릴리온 니트','top','knit','green'],['카키 MA-1','outer','2','khaki'],['차콜 발마칸 코트','outer','3','charcoal'],['베이지 코튼 팬츠','bottom','pants','beige'],['생지 데님','bottom','pants','rawdenim'],['옐로우 더스트 인디고 데님','bottom','pants','midwash'],['그레이 스웨트 팬츠','bottom','pants','melange'],['블랙 스웨트 팬츠','bottom','pants','black'],['블랙 트랙 팬츠','bottom','pants','black'],['브라운 코듀로이','bottom','pants','brown'],['NB 480 베이지','shoes','sneaker','beige'],['NB 509 블랙','shoes','sneaker','black'],['NB 740 실버','shoes','sneaker','silver'],['캔버스 아이보리','shoes','canvas','ivory']];
+const DEF=[['화이트 티','top','tee','white'],['차콜 하프집업 니트','top','knit','charcoal'],['카키모카 니트','top','knit','mocha'],['그레이 가디건','top','cardi','melange'],['그레이 LMS 후디','top','hood','melange'],['네이비 LMS 후디','top','hood','navy'],['그레이 크롭 후드집업','top','cardi','lightgray'],['버건디 헨리넥','top','knit','burgundy'],['버건디 맨투맨','top','sweat','burgundy'],['브라운 헨리넥','top','knit','brown'],['블랙 CDM 니트','top','knit','black'],['그린 트릴리온 니트','top','knit','green'],['카키 MA-1','outer','2','khaki'],['차콜 발마칸 코트','outer','3','charcoal'],['베이지 코튼 팬츠','bottom','pants','beige'],['생지 데님','bottom','pants','rawdenim'],['옐로우 더스트 인디고 데님','bottom','pants','midwash'],['그레이 스웨트 팬츠','bottom','pants','melange'],['블랙 스웨트 팬츠','bottom','pants','black'],['블랙 트랙 팬츠','bottom','pants','black'],['브라운 코듀로이','bottom','thick','brown'],['NB 480 베이지','shoes','sneaker','beige'],['NB 509 블랙','shoes','sneaker','black'],['NB 740 실버','shoes','sneaker','silver'],['캔버스 아이보리','shoes','canvas','ivory']];
 const KEY='codi_wardrobe_v1';
 let W;try{W=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 if(!Array.isArray(W))W=DEF.map((d,i)=>({id:'d'+i,name:d[0],cat:d[1],kind:d[2],color:d[3]}));
@@ -43,19 +43,20 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 const dot=c=>`<span class="d" style="background:${(P[c]||P.white)[1]}"></span>`;
 const tone=c=>(P[c]||['','','o'])[2];
 let st={bottom:'auto',seed:1,manual:null,wx:null,wxMsg:'날씨 불러오는 중…',newColor:'white',newCat:'top',err:''};
-function rnd(s){let h=st.seed*9973;for(const ch of s)h=(h*31+ch.charCodeAt(0))%100003;return h/100003}
+function rnd(s){let h=Math.imul(st.seed,2654435761)>>>0;for(const ch of s)h=Math.imul(h^ch.charCodeAt(0),16777619)>>>0;h^=h>>>15;h=Math.imul(h,2246822507)>>>0;h^=h>>>13;return(h>>>0)/4294967296}
 const tier=t=>t>=23?0:t>=17?1:t>=11?2:t>=5?3:4;
 const TL=['더움','선선','쌀쌀','추움','한파'],TT=[25,19,13,7,0];
 const TOPK=[['tee','shirt'],['tee','shirt','knit','sweat','hood'],['shirt','knit','sweat','hood'],['knit','sweat','hood','cardi'],['knit','sweat','hood','cardi']];
 const WARM=['brown','khaki','green','mustard'],WARMB=['brown','khaki'];
 function effTemp(){if(st.manual!=null)return st.manual;const w=st.wx;return w?Math.round(Math.min(w.a,(w.mn+w.mx)/2)):15}
 function rain(){const w=st.wx;return st.manual==null&&w&&(w.code>=51||w.pp>=50)}
-function shoeFor(b){const sh=W.filter(x=>x.cat==='shoes'&&!(rain()&&x.kind==='canvas'));if(!sh.length)return null;
+function shoeFor(b,k){const sh=W.filter(x=>x.cat==='shoes'&&!(rain()&&x.kind==='canvas'));if(!sh.length)return null;
 const pr=b.color==='black'?['silver','black','white','ivory']:['beige','brown','khaki','mocha'].includes(b.color)?['beige','ivory','silver','black']:['charcoal','melange','lightgray'].includes(b.color)?['silver','black','white','ivory']:['silver','ivory','white','black','beige'];
-for(const c of pr){const f=sh.find(x=>x.color===c);if(f)return f}return sh[0]}
+const ok=[];for(const c of pr){const f=sh.find(x=>x.color===c);if(f)ok.push(f)}
+return ok.length?ok[Math.floor(rnd(k+'s')*ok.length)]:sh[0]}
 function outfits(){const tr=tier(effTemp()),tops=W.filter(x=>x.cat==='top'),outs=W.filter(x=>x.cat==='outer'),cardis=tops.filter(x=>x.kind==='cardi');
 const tees=tops.filter(x=>x.kind==='tee'&&tone(x.color)==='g').sort((a,b)=>(a.color==='white'?-1:1));
-const bots=W.filter(x=>x.cat==='bottom'&&(st.bottom==='auto'||x.id===st.bottom));let res=[];
+const bots=W.filter(x=>x.cat==='bottom'&&(st.bottom==='auto'?!(tr===0&&x.kind==='thick'):x.id===st.bottom));let res=[];
 for(const b of bots)for(const t of tops){if(!TOPK[tr].includes(t.kind))continue;
 if(t.color==='black'&&b.color==='black')continue;if(WARM.includes(t.color)&&WARMB.includes(b.color))continue;
 let oo=[null];const tl=['tee','shirt'].includes(t.kind);
@@ -63,14 +64,16 @@ if(tr===1)oo=[null,...(tl?cardis:[])];
 if(tr===2)oo=[null,...(tl?cardis:[]),...outs.filter(o=>o.kind!=='3')];
 if(tr===3){const f=outs.filter(o=>o.kind>='2');oo=f.length?f:[null]}
 if(tr===4){let f=outs.filter(o=>o.kind==='3');if(!f.length)f=outs.filter(o=>o.kind>='2');oo=f.length?f:[null]}
-for(const o of oo){if(o&&o.id===t.id)continue;let sc={g:3,o:1,a:-1}[tone(t.color)],notes=[];
+for(const o of oo){if(o&&o.id===t.id)continue;let sc={g:3,o:2.5,a:-1}[tone(t.color)],notes=[];
 if(o&&tone(o.color)==='a'){if(tone(t.color)==='a')continue;if(t.kind==='hood'){sc+=2;notes.push('후드는 아우터 밖으로')}}
 if(o&&tone(o.color)==='g')sc+=1;
-let inner=null;if(t.kind!=='tee'&&(tone(t.color)==='a'||t.kind==='cardi'&&!o)){inner=tees.find(x=>x.id!==t.id)||{name:'화이트·그레이 티 (추천)',color:'white'};notes.push('목에 이너가 살짝 보이게')}
+let inner=null;if(t.kind!=='tee'&&(tone(t.color)==='a'||t.kind==='cardi'&&!o)){inner=tees.find(x=>x.id!==t.id)||{name:'화이트·그레이 티 (추천)',color:'white'};notes.push('목에 이너가 살짝 보이게');if(tone(t.color)==='a')sc+=3.5}
 if(t.color===b.color&&!['melange','charcoal'].includes(t.color))sc-=1;
-sc+=rnd(t.id+b.id+(o?o.id:''))*2;res.push({b,t,o,inner,sh:shoeFor(b),sc,notes})}}
-res.sort((a,b)=>b.sc-a.sc);const out=[],ut=new Set(),ub={};
-for(const r of res){if(ut.has(r.t.id)||(ub[r.b.id]||0)>=2)continue;ut.add(r.t.id);ub[r.b.id]=(ub[r.b.id]||0)+1;out.push(r);if(out.length>=4)break}return out}
+const k=t.id+b.id+(o?o.id:'');sc+=rnd(k)*3;res.push({b,t,o,inner,sh:shoeFor(b,k),sc,notes})}}
+res.sort((a,b)=>b.sc-a.sc);const out=[],ub={},used=new Set(),cap=st.bottom==='auto'?2:4;
+const pick=(ok,n=4)=>{for(const r of res){if(out.length>=n)return;const p=r.t.id+r.b.id;if(used.has(p)||(ub[r.b.id]||0)>=cap||!ok(r))continue;used.add(p);ub[r.b.id]=(ub[r.b.id]||0)+1;out.push(r)}};
+const nt=r=>!out.some(x=>x.t.id===r.t.id);
+pick(nt,3);pick(r=>nt(r)&&tone(r.t.color)!=='g');pick(nt);pick(()=>true);return out}
 const row=(l,x)=>x?`<div class="i">${dot(x.color)}<span class="l">${l}</span><span>${esc(x.name)}</span></div>`:'';
 function vToday(){const t=effTemp(),tr=tier(t),w=st.wx;
 let wx=st.manual!=null?`직접 선택: ${TL[tr]} (${t}°)`:w?`${Math.round(w.t)}° (체감 ${Math.round(w.a)}°) · 최저 ${Math.round(w.mn)}° / 최고 ${Math.round(w.mx)}°${rain()?' · 비 소식':''}`:st.wxMsg;
