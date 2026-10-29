@@ -167,29 +167,29 @@ const k=colorFromText(c.txt);c.rgb=null;c.far=false;if(k){c.key=fitCat(k,c.cat);
 document.querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{c.key=b.dataset.ck;c.rgb=null;c.far=false;c.msg='';c.how='직접 고름';vShop()});
 const add=document.getElementById('ckadd');if(add)add.onclick=()=>{st.newCat=c.cat;st.newColor=c.key;document.querySelector('.tabs button[data-t="closet"]').click()}}
 const BODY_KEY='codi_body_v1';
-const BF=[['h','키','cm'],['w','몸무게','kg'],['sh','어깨너비','양쪽 어깨 끝 뼈 사이 직선'],['ch','가슴둘레','겨드랑이 아래 가장 넓은 곳 한 바퀴'],['arm','팔 길이','어깨 끝 뼈에서 손목뼈까지'],['wa','허리둘레','바지 입는 높이 한 바퀴'],['hip','엉덩이둘레','가장 튀어나온 곳 한 바퀴'],['th','허벅지둘레','가랑이 바로 아래 한 바퀴'],['leg','다리 길이','바지 허리 높이에서 바닥까지 옆선'],['knee','허리~무릎','바지 허리 높이에서 무릎 바로 아래까지']];
+const BF=[['h','키','cm'],['w','몸무게','kg'],['sh','어깨너비','양쪽 어깨 끝 뼈 사이 직선'],['ch','가슴둘레','겨드랑이 아래 가장 넓은 곳 한 바퀴'],['arm','팔 길이','어깨 끝 뼈에서 손목뼈까지'],['torso','어깨~골반','목 옆 어깨선(승모근)에서 골반뼈까지'],['wa','허리둘레','바지 입는 높이 한 바퀴'],['hip','엉덩이둘레','가장 튀어나온 곳 한 바퀴'],['th','허벅지둘레','가랑이 바로 아래 한 바퀴'],['leg','다리 길이','골반뼈(바지 허리 높이)에서 바닥까지'],['knee','허리~무릎','바지 허리 높이에서 무릎 바로 아래까지']];
 let BD;try{BD=JSON.parse(localStorage.getItem(BODY_KEY))}catch(e){}
 if(!BD||typeof BD!=='object')BD={};
 const FT={top:['상의',[['len','총장'],['sh','어깨너비'],['ch','가슴단면'],['sl','소매길이']]],outer:['아우터',[['len','총장'],['sh','어깨너비'],['ch','가슴단면'],['sl','소매길이']]],bottom:['긴바지',[['len','총장'],['wa','허리단면'],['hip','엉덩이단면'],['th','허벅지단면'],['hem','밑단단면']]],shorts:['반바지',[['len','총장'],['wa','허리단면'],['th','허벅지단면']]]};
 st.fit={type:'top',g:{},res:null};
 const num=v=>{const n=parseFloat(String(v).replace(',','.'));return isFinite(n)&&n>0?n:null};
-const cm=v=>`${Math.round(v*10)/10}cm`;
+const cm=v=>`${Math.round(v*10)/10}cm`,dif=(d,big,small)=>Math.abs(d)<0.5?'몸과 거의 같아요':d>0?`옷이 ${cm(d)} ${big}`:`옷이 ${cm(-d)} ${small}`;
 function fitCheck(type,g,b){const R=[],add=(t,v,warn)=>R.push({t,v,warn});
 if(type==='top'||type==='outer'){const ex=type==='outer'?6:0;
 if(g.ch&&b.ch){const e=g.ch*2-b.ch;add('가슴',`여유 ${cm(e)} · `+(e<2+ex?'작아서 끼어요':e<8+ex?'몸에 붙는 슬림핏이에요':e<16+ex?'정핏이에요':e<26+ex?'여유 있는 세미오버예요':'오버핏이에요'),e<2+ex)}
-if(g.sh&&b.sh){const d=g.sh-b.sh;add('어깨',`옷이 ${d>=0?cm(d)+' 넓어요':cm(-d)+' 좁아요'} · `+(d<-1?'어깨가 끼일 수 있어요':d<=3?'어깨선이 어깨 끝에 맞아요':d<=8?'어깨선이 조금 내려와요 (드롭 숄더)':'어깨선이 많이 내려와요 (오버핏)'),d<-1)}
+if(g.sh&&b.sh){const d=g.sh-b.sh;add('어깨',dif(d,'넓어요','좁아요')+' · '+(d<-1?'어깨가 끼일 수 있어요':d<=3?'어깨선이 어깨 끝에 맞아요':d<=8?'어깨선이 조금 내려와요 (드롭 숄더)':'어깨선이 많이 내려와요 (오버핏)'),d<-1)}
 if(g.sl){if(g.sl<40)add('소매','반팔이라 소매 길이는 비교하지 않아요');else if(b.arm){const d=g.sl+(g.sh&&b.sh?(g.sh-b.sh)/2:0)-b.arm;
 add('소매',d<-3?'손목 위로 올라와 짧아요':d<=2?'손목에 맞아요':d<=6?'손등을 조금 덮어요':'많이 길어서 손을 덮어요',d<-3||d>8)}}
-if(g.len&&b.h&&type==='outer'){const r=g.len/b.h;add('기장',r<0.40?'짧은 기장 (엉덩이 위)':r<0.47?'엉덩이를 덮는 기장':r<0.56?'허벅지 중간까지 오는 하프 기장':'무릎 근처까지 오는 롱 기장')}
-else if(g.len&&b.h){const ref=Math.round(b.h*0.39),d=g.len-ref;add('기장',`키 기준 보통 ${ref}cm 안팎 · `+(d<-5?'짧은 크롭 기장이에요':d<=3?'보통 기장이에요':d<=8?'조금 긴 기장이에요':'긴 기장이에요'))}}
-else{if(g.wa&&b.wa){const d=g.wa*2-b.wa;add('허리',`옷이 ${d>=0?cm(d)+' 커요':cm(-d)+' 작아요'} · `+(d<-2?'작아요 (밴딩이면 들어갈 수 있어요)':d<=3?'맞아요':d<=8?'조금 커서 벨트가 필요해요':'많이 커요 (밴딩이 아니면 줄여야 해요)'),d<-2||d>8)}
+const tor=b.torso||(b.h?b.h*0.30:null);if(g.len&&tor){const d=g.len-tor,base=b.torso?`골반보다 ${d>=0?cm(d)+' 아래':cm(-d)+' 위'}까지 · `:'(어깨~골반 길이가 없어 키로 어림) · ';
+add('기장',base+(type==='outer'?(d<18?'짧은 기장 (엉덩이 위)':d<30?'엉덩이를 덮는 기장':d<47?'허벅지 중간까지 오는 하프 기장':'무릎 근처까지 오는 롱 기장'):(d<11?'짧은 크롭 기장이에요':d<=19?'보통 기장이에요':d<=24?'조금 긴 기장이에요':'긴 기장이에요')))}}
+else{if(g.wa&&b.wa){const d=g.wa*2-b.wa;add('허리',dif(d,'커요','작아요')+' · '+(d<-2?'작아요 (밴딩이면 들어갈 수 있어요)':d<=3?'맞아요':d<=8?'조금 커서 벨트가 필요해요':'많이 커요 (밴딩이 아니면 줄여야 해요)'),d<-2||d>8)}
 if(type==='bottom'&&g.hip&&b.hip){const e=g.hip*2-b.hip;add('엉덩이',`여유 ${cm(e)} · `+(e<2?'끼어요':e<8?'딱 맞아요':e<16?'여유 있어요':'아주 넉넉해요'),e<2)}
 if(g.th&&b.th){const e=g.th*2-b.th;add('허벅지',`여유 ${cm(e)} · `+(e<3?'끼어요':e<8?'슬림핏이에요':e<15?'레귤러핏이에요':'와이드핏이에요'),e<3)}
-if(type==='bottom'&&g.len&&b.leg){const d=g.len-b.leg;add('기장',d<-6?'발목 위로 올라오는 크롭 기장이에요':d<=-1?'복숭아뼈쯤 와요':d<=4?'신발에 살짝 닿아요':'길어서 쌓이거나 접어야 해요',d>8)}
+if(type==='bottom'&&g.len&&b.leg){const d=g.len-b.leg;add('기장',`바닥보다 ${d>=0?cm(d)+' 길어요':cm(-d)+' 위'} · `+(d<-10?'발목 위로 올라오는 크롭 기장이에요':d<-4?'복숭아뼈쯤 와요':d<=2?'신발 등에 살짝 닿아요':'길어서 쌓이거나 접어야 해요'),d>6)}
 if(type==='shorts'&&g.len&&b.knee){const d=g.len-b.knee;add('기장',d>=0?'무릎을 덮어요':d>=-4?'무릎에 걸쳐요':'무릎 위로 올라와요',d<-4)}
 if(type==='bottom'&&g.hem)add('밑단',g.hem<17.5?'좁은 밑단 (테이퍼드)':g.hem<22?'보통 밑단 (스트레이트)':'넓은 밑단 (와이드)')}
 return R}
-function fitHTML(){const f=st.fit,fs=FT[f.type][1],need={top:['sh','ch','arm','h'],outer:['sh','ch','arm','h'],bottom:['wa','hip','th','leg'],shorts:['wa','th','knee']}[f.type].filter(k=>!BD[k]);
+function fitHTML(){const f=st.fit,fs=FT[f.type][1],need={top:['sh','ch','arm','torso'],outer:['sh','ch','arm','torso'],bottom:['wa','hip','th','leg'],shorts:['wa','th','knee']}[f.type].filter(k=>!BD[k]);
 return`<div class="c"><details id="bdet" ${!Object.keys(BD).some(k=>!['h','w'].includes(k))?'open':''}><summary class="n" style="cursor:pointer">내 신체 치수 · ${BD.h?BD.h+'cm':'키 없음'} / ${BD.w?BD.w+'kg':'몸무게 없음'}</summary>
 <div class="s" style="margin:4px 0 8px">줄자로 재서 cm로 넣어 주세요. 모르는 칸은 비워 둬도 돼요.</div>
 ${BF.map(([k,l,h])=>`<div style="margin-bottom:2px"><div style="font-size:13px">${l} <span class="s">${h==='cm'||h==='kg'?h:'· '+h}</span></div><input data-bd="${k}" type="number" inputmode="decimal" value="${BD[k]??''}"></div>`).join('')}
